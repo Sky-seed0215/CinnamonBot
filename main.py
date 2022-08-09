@@ -11,7 +11,16 @@ intents = discord.Intents.all()
 class CinnamonBot(commands.Bot):
     def __init__(self):
         super().__init__(intents=intents)
+        self.modules = [
+            'cogs.help',
+        ]
+
     async def on_ready(self):
+        for ext in self.modules:
+            await self.load_extension(ext)
+            commands = await bot.tree.sync()
+            command_log = ",".join(command.name for command in commands)
+            print(command_log)
         print(f"Bot名:{self.user} On ready!!")
 
     async def on_command_error(self, ctx, error):

@@ -3,12 +3,12 @@ from discord import app_commands, SelectOption
 from discord.ext import commands
 
 class selectView(discord.ui.View):
-    def __init__(self):
+    def __init__(self, select: bool = False):
         super().__init__()
-        self.add_item(SelectList())
+        self.add_item(SelectList(select))
 
 class SelectList(discord.ui.Select):
-    def __init__(self):
+    def __init__(self, disable: bool = False):
         options = []
         options.append(SelectOption(label="メインコマンド", emoji="📰", description="メインコマンドです。たくさんのコマンド（ほぼネタ）があります。"))
         options.append(SelectOption(label="謎物語生成コマンド", emoji="📚", description="謎の物語を生成するコマンドです。使えば使うほどカオスになっていくコマンドです。"))
@@ -21,7 +21,7 @@ class SelectList(discord.ui.Select):
         options.append(SelectOption(label="競馬コマンド", emoji="🗯", description="お金をかけて競馬するコマンドです。ハマりすぎには気をつけてください。"))
         options.append(SelectOption(label="Statコマンド", emoji="📇", description="マイクラ鯖の情報を取得するやつです。"))
 
-        super().__init__(placeholder="表示するヘルプコマンドを指定してね", min_values=1, max_values=1, options=options)
+        super().__init__(placeholder="表示するヘルプコマンドを指定してね", min_values=1, max_values=1, options=options, disabled=disable)
 
     async def callback(self, interaction: discord.Interaction):
         embed = discord.Embed(title=f"helpコマンド：{self.values[0]}",color=0x1e90ff)
@@ -136,7 +136,7 @@ class SelectList(discord.ui.Select):
                     \n**・/stat get**\n情報を取得するコマンドです。今参加してるメンバーとかを確認できるよ！\
                     \n**・/stat set**\n鯖のurlを設定するコマンドです。何らかの要因でurlが変わったときに使おう。\
                    ")
-        await interaction.response.edit_message(embed=embed)
+        await interaction.response.edit_message(content=None, embed=embed, view=selectView(True))
 
 class helpCog(commands.Cog):
     def __init__(self, bot):
